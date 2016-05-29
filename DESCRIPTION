@@ -7,7 +7,7 @@ Type: Package
 Authors@R: c(person("Garrett", "Grolemund", role = "aut"),
              person("Vitalie", "Spinu", email = "spinuvit@gmail.com", role = c("aut","cre")),
              person("Hadley", "Wickham", role = "aut"),
-             person("Jan", "Lyttle", role="ctb"),
+             person("Ian", "Lyttle", role="ctb"),
              person("Imanuel", "Constigan", role = "ctb"),
              person("Jason", "Law", role="ctb"),
              person("Doug","Mitarotonda", role="ctb"),
@@ -22,7 +22,7 @@ Description: Functions to work with date-times and timespans: fast and user
     fun.
 Enhances: chron, timeDate, zoo, xts, its, tis, timeSeries,
     fts, tseries
-Version: 1.5.0.9000
+Version: 1.5.6.9000
 Depends:
     methods,
     R (>= 3.0.0)

@@ -1,18 +1,34 @@
-
-Version 1.5.0.9000 (development)
+Version 1.5.6.9000 (development)
 ============
 
 ### NEW FEATURES
 
+* [#412](https://github.com/hadley/lubridate/issues/412) New function `make_date` to produce Date objects. A counterpart of `make_datetime`.
+* [#268](https://github.com/hadley/lubridate/issues/268) `round_date`, `ceiling_date`, and `floor_date` now accept "quarter", "bimonth", and "halfyear" as `unit` options.
+
+
+### CHANGES
+
+* [#403](https://github.com/hadley/lubridate/issues/403) Update on `Date` objects now return `POSIXct` instead of `POSIXlt`.
+* [#411](https://github.com/hadley/lubridate/issues/411) format `mdy` or `myd` beginning with `"January"` or `"Jan"` now parsing correctly
+
+Version 1.5.6
+============
+
+### NEW FEATURES
+
+* [#390](https://github.com/hadley/lubridate/issues/390) `ceiling_date` gains new argument `change_on_boundary` to allow ceiling on boundary of date-time objects.
 * C parser can now produce a list of date-time components suitable for POSIXlt constructors.
 * `parse_date_time2` and `fast_strptime` gain new `lt` argument to control type of output.
 * [#373](https://github.com/hadley/lubridate/issues/373) New `date` and `date<-` additions to the `year`, `month` etc family of accessors.
 * [#365](https://github.com/hadley/lubridate/issues/365) New very fast datetime constructor `make_datetime` (dropin replacement of `ISOdatetime`).
 * [#344](https://github.com/hadley/lubridate/issues/344) `force_tz` and `with_tz` can handle data.frames component-wise.
+* [#355](https://github.com/hadley/lubridate/issues/355) New `as_date` replacement of `as.Date` with more intuitive behavior with non-UTC timezones.
+* [#333](https://github.com/hadley/lubridate/issues/333) `hms` parsers now handle negative components.
 
 ### CHANGES
 
-* [##391](https://github.com/hadley/lubridate/issues/391) `ymd` family of functions return `Date` object when `tz` argument is NULL (new default) and POSIXct otherwise.
+* [#391](https://github.com/hadley/lubridate/issues/391) `ymd` family of functions return `Date` object when `tz` argument is NULL (new default) and POSIXct otherwise.
 * [#364](https://github.com/hadley/lubridate/issues/364) Remove epoch functions.
 * For consistency with `base:strptime` `fast_strptime` now returns `POSIXlt` object. That is, its `lt` argument defaults to `TRUE`.
 
@@ -22,6 +38,7 @@ Version 1.5.0.9000 (development)
 * [#371](https://github.com/hadley/lubridate/issues/371) `as.period` correctly computes months with intervals spanning multiple years.
 * [#388](https://github.com/hadley/lubridate/issues/388) `time_length` and `add_with_rollback` now work correctly with missing intervals.
 * [#394](https://github.com/hadley/lubridate/issues/394) `fast_strptime` and `parse_date_time2` correctly treat non-UTC time zones.
+* [#399](https://github.com/hadley/lubridate/issues/399) `floor_date` and `round_date` are not preserving tz component for larger than day units
 
 Version 1.5.0
 =============
