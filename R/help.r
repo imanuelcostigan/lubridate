@@ -20,12 +20,9 @@
 #' \code{\link{Period-class}} objects with the functions
 #' \code{\link{hm}}, \code{\link{hms}} and \code{\link{ms}}.
 #'
-#' Lubridate has an inbuilt very fast POSIX parser, ported from
-#' the fasttime package by Simon Urbanek. This functionality is
-#' as yet optional and could be activated with
-#' \code{options(lubridate.fasttime = TRUE)}. Lubridate will
-#' automatically detect POSIX strings and use fast parser instead
-#' of the default \code{\link{strptime}} utility.
+#' Lubridate has an inbuilt very fast POSIX parser. Most of the \code{strptime}
+#' formats and various extensions are supported for English locales. See
+#' \code{\link{parse_date_time}} for more details.
 #'
 #' Manipulating dates
 #'
@@ -150,7 +147,7 @@
 #' its year.
 #' \code{\link{leap_year}} tests whether an instant occurs during
 #' a leap year.
-#' \code{\link{pretty.dates}} provides a method of making pretty
+#' \code{\link{pretty_dates}} provides a method of making pretty
 #' breaks for date-times
 #' \code{\link{lakers}} is a data set that contains information
 #' about the Los Angeles Lakers 2008-2009 basketball season.
@@ -159,7 +156,7 @@
 #'   Easy with lubridate. Journal of Statistical Software, 40(3), 1-25.
 #'   \url{http://www.jstatsoft.org/v40/i03/}.
 #' @import stringr
-#' @importFrom methods setClass setGeneric new show allNames callGeneric is slot slot<- slotNames validObject
+#' @importFrom methods setClass setGeneric new show allNames callGeneric is slot slot<- slotNames validObject Compare Arith
 #' @importFrom utils packageVersion read.delim
 #' @importFrom stats na.omit setNames update
 #' @docType package

@@ -17,62 +17,119 @@ test_that("floor_date works for each time element",{
   	"2009-08-01 00:00:00", tz = "UTC"))
   expect_identical(floor_date(x, "bimonth"), as.POSIXct(
   	"2009-07-01 00:00:00", tz = "UTC"))
-  expect_identical(floor_date(x, "quarter"), as.POSIXct(
-    "2009-07-01 00:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "quarter"),
+                   as.POSIXct("2009-07-01 00:00:00", tz = "UTC"))
   expect_identical(floor_date(x, "halfyear"), as.POSIXct(
     "2009-07-01 00:00:00", tz = "UTC"))
   expect_identical(floor_date(x, "year"), as.POSIXct(
   	"2009-01-01 00:00:00", tz = "UTC"))
 })
 
-test_that("ceiling_date works for each time element",{
-  x <- as.POSIXct("2009-08-03 12:01:59.23", tz = 	"UTC")
 
-  expect_identical(ceiling_date(x, "second"), as.POSIXct(
-  	"2009-08-03 12:02:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "minute"), as.POSIXct(
-  	"2009-08-03 12:02:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "hour"), as.POSIXct(
-  	"2009-08-03 13:00:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "day"), as.POSIXct(
-  	"2009-08-04 00:00:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "week"), as.POSIXct(
-  	"2009-08-09 00:00:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "month"), as.POSIXct(
-  	"2009-09-01 00:00:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "bimonth"), as.POSIXct(
-  	"2009-09-01 00:00:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "quarter"), as.POSIXct(
-    "2009-10-01 00:00:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "halfyear"), as.POSIXct(
-  	"2010-01-01 00:00:00", tz = "UTC"))
-  expect_identical(ceiling_date(x, "year"), as.POSIXct(
-  	"2010-01-01 00:00:00", tz = "UTC"))
+test_that("ceiling_date works with multi-units",{
+  x <- as.POSIXct("2009-08-03 12:01:59.23", tz = 	"UTC")
+})
+
+test_that("floor_date works for multi-units",{
+  x <- as.POSIXct("2009-08-03 12:01:59.23", tz = "UTC")
+  expect_identical(floor_date(x, "2 secs"),   as.POSIXct("2009-08-03 12:01:58", tz = "UTC"))
+  expect_identical(floor_date(x, "2s"),   as.POSIXct("2009-08-03 12:01:58", tz = "UTC"))
+  expect_identical(floor_date(x, "2 mins"),   as.POSIXct("2009-08-03 12:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "2M"),   as.POSIXct("2009-08-03 12:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "2 hours"),     as.POSIXct("2009-08-03 12:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "2h"),     as.POSIXct("2009-08-03 12:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "2 days"),      as.POSIXct("2009-08-03 00:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "3 days"),      as.POSIXct("2009-08-01 00:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "10 days"),      as.POSIXct("2009-08-01 00:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "10d"),      as.POSIXct("2009-08-01 00:00:00", tz = "UTC"))
+  ## expect_identical(floor_date(x, "2 week"), as.POSIXct("2009-08-xx 00:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "2 month"),    as.POSIXct("2009-07-01 00:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "2m"),    as.POSIXct("2009-07-01 00:00:00", tz = "UTC"))
+  expect_identical(floor_date(x, "2 bimonth"),  floor_date(x, "4 months"))
+  expect_identical(floor_date(x, "2 quarter"),  floor_date(x, "6 months"))
+  expect_identical(floor_date(x, "2 halfyear"), floor_date(x, "year"))
+  expect_identical(floor_date(x, "2 year"),     as.POSIXct("2008-01-01 00:00:00", tz = "UTC"))
+})
+
+test_that("multi-unit rounding works the same for POSIX and Date objects", {
+  px <- ymd("2009-08-01", tz = "UTC")
+  dt <- ymd("2009-08-01")
+  expect_identical(floor_date(px, "5 mins"), floor_date(dt, "5 mins"))
+  expect_identical(floor_date(px, "5 mins"), floor_date(dt, "5 mins"))
+  expect_identical(ceiling_date(px + 0.0001, "5 mins"), ceiling_date(dt, "5 mins"))
+  expect_identical(ceiling_date(px, "5 mins", change_on_boundary = T),
+                   ceiling_date(dt, "5 mins", change_on_boundary = T))
+  expect_identical(ceiling_date(px + 0.001, "5 hours"), ceiling_date(dt, "5 hours"))
+  expect_identical(ceiling_date(px + 0.0001, "5 hours", change_on_boundary = T), ceiling_date(dt, "5 hours", change_on_boundary = T))
+  expect_identical(ceiling_date(px + 0.001, "2 hours"), ceiling_date(dt, "2 hours"))
+  expect_identical(as_date(floor_date(px, "2 days")), floor_date(dt, "2 days"))
+  expect_identical(as_date(ceiling_date(px + 0.001, "2 days")), ceiling_date(dt, "2 days"))
+  expect_identical(as_date(floor_date(px, "5 days")), floor_date(dt, "5 days"))
+  expect_identical(as_date(ceiling_date(px + 0.001, "5 days")), ceiling_date(dt, "5 days"))
+  expect_identical(as_date(floor_date(px, "2 months")), floor_date(dt, "2 months"))
+  expect_identical(as_date(ceiling_date(px, "2 months")), ceiling_date(dt, "2 months"))
+  expect_identical(as_date(floor_date(px, "5 months")), floor_date(dt, "5 months"))
+  expect_identical(as_date(ceiling_date(px, "5 months")), ceiling_date(dt, "5 months"))
+})
+
+
+test_that("ceiling_date works for multi-units",{
+  x <- as.POSIXct("2009-08-03 12:01:59.23", tz = "UTC")
+  y <- as.POSIXct("2009-08-03 12:01:30.23", tz = "UTC")
+  z <- as.POSIXct("2009-08-24 12:01:30.23", tz = "UTC")
+  expect_identical(ceiling_date(x, "2 secs"),   as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "3 secs"),   as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "5 secs"),   as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
+  expect_identical(ceiling_date(y, "2 secs"),   as.POSIXct("2009-08-03 12:01:32", tz = "UTC"))
+  expect_identical(ceiling_date(y, "3 secs"),   as.POSIXct("2009-08-03 12:01:33", tz = "UTC"))
+  expect_identical(ceiling_date(y, "5 secs"),   as.POSIXct("2009-08-03 12:01:35", tz = "UTC"))
+  expect_identical(ceiling_date(x, "2 mins"),   as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "3 mins"),   as.POSIXct("2009-08-03 12:03:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "5 mins"),   as.POSIXct("2009-08-03 12:05:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "2 hours"),     as.POSIXct("2009-08-03 14:00:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "3 hours"),     as.POSIXct("2009-08-03 15:00:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "2 days"),      as.POSIXct("2009-08-05 00:00:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "3 days"),      as.POSIXct("2009-08-04 00:00:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "10 days"),      as.POSIXct("2009-08-11 00:00:00", tz = "UTC"))
+  expect_identical(ceiling_date(z, "5 days"),      as.POSIXct("2009-08-26 00:00:00", tz = "UTC"))
+  expect_identical(ceiling_date(z, "10 days"),      as.POSIXct("2009-08-31 00:00:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "2 month"),    as.POSIXct("2009-09-01 00:00:00", tz = "UTC"))
+  expect_identical(ceiling_date(x, "2 bimonth"),  ceiling_date(x, "4 months"))
+  expect_identical(ceiling_date(x, "2 quarter"),  ceiling_date(x, "6 months"))
+  expect_identical(ceiling_date(x, "2 halfyear"), ceiling_date(x, "year"))
+  expect_identical(ceiling_date(x, "2 year"),     as.POSIXct("2010-01-01 00:00:00", tz = "UTC"))
 })
 
 test_that("round_date works for each time element",{
   x <- as.POSIXct("2009-08-03 12:01:59.23", tz = "UTC")
+  expect_equal(round_date(x, "second"), as.POSIXct("2009-08-03 12:01:59", tz = "UTC"))
+  expect_equal(round_date(x, "minute"), as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
+  expect_equal(round_date(x, "hour"), as.POSIXct("2009-08-03 12:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "day"), as.POSIXct("2009-08-04 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "week"), as.POSIXct("2009-08-02 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "month"), as.POSIXct("2009-08-01 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "bimonth"), as.POSIXct("2009-09-01 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "quarter"), as.POSIXct("2009-07-01 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "halfyear"), as.POSIXct("2009-07-01 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "year"), as.POSIXct("2010-01-01 00:00:00", tz = "UTC"))
+})
 
-  expect_identical(round_date(x, "second"),
-                   as.POSIXct("2009-08-03 12:01:59", tz = "UTC"))
-  expect_identical(round_date(x, "minute"), as.POSIXct(
-  	"2009-08-03 12:02:00", tz = "UTC"))
-  expect_identical(round_date(x, "hour"), as.POSIXct(
-  	"2009-08-03 12:00:00", tz = "UTC"))
-  expect_identical(round_date(x, "day"), as.POSIXct(
-  	"2009-08-04 00:00:00", tz = "UTC"))
-  expect_identical(round_date(x, "week"), as.POSIXct(
-  	"2009-08-02 00:00:00", tz = "UTC"))
-  expect_identical(round_date(x, "month"), as.POSIXct(
-  	"2009-08-01 00:00:00", tz = "UTC"))
-  expect_identical(round_date(x, "bimonth"), as.POSIXct(
-  	"2009-09-01 00:00:00", tz = "UTC"))
-  expect_identical(round_date(x, "quarter"), as.POSIXct(
-    "2009-07-01 00:00:00", tz = "UTC"))
-  expect_identical(round_date(x, "halfyear"), as.POSIXct(
-  	"2009-07-01 00:00:00", tz = "UTC"))
-  expect_identical(round_date(x, "year"), as.POSIXct(
-  	"2010-01-01 00:00:00", tz = "UTC"))
+test_that("round_date works for multi-units",{
+  x <- as.POSIXct("2009-08-03 12:01:59.23", tz = "UTC")
+  expect_equal(round_date(x, "2 second"), as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
+  expect_equal(round_date(x, "2 minute"), as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
+  expect_equal(round_date(x, "3 mins"), as.POSIXct("2009-08-03 12:03:00", tz = "UTC"))
+  expect_equal(round_date(x, "5 mins"), as.POSIXct("2009-08-03 12:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "2 hour"), as.POSIXct("2009-08-03 12:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "5 hour"), as.POSIXct("2009-08-03 10:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "2 days"), as.POSIXct("2009-08-03 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "2 months"), as.POSIXct("2009-09-01 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "bimonth"), round_date(x, "2 months"))
+  expect_equal(round_date(x, "bimonth"), round_date(x, "4 months"))
+  expect_equal(round_date(x, "quarter"), round_date(x, "3 months"))
+  expect_equal(round_date(x, "halfyear"), round_date(x, "6 months"))
+  expect_equal(round_date(x, "3 years"), as.POSIXct("2010-01-01 00:00:00", tz = "UTC"))
+  expect_equal(round_date(x, "4 years"), as.POSIXct("2008-01-01 00:00:00", tz = "UTC"))
 })
 
 test_that("floor_date handles vectors",{
@@ -141,34 +198,34 @@ test_that("round_date handles vectors",{
 test_that("floor_date works for a variety of formats",{
   x <- as.POSIXct("2009-08-03 12:01:59", tz = "UTC")
 
-  expect_identical(floor_date(x, "minute"),
+  expect_equal(floor_date(x, "minute"),
     as.POSIXct("2009-08-03 12:01:00", tz = "UTC"))
-  expect_identical(floor_date(as.Date(x), "month"),
+  expect_equal(floor_date(as.Date(x), "month"),
     as.Date("2009-08-01"))
-  expect_identical(floor_date(as.Date(x), "bimonth"),
+  expect_equal(floor_date(as.Date(x), "bimonth"),
     ymd("2009-07-01"))
-  expect_identical(floor_date(as.Date(x), "quarter"),
+  expect_equal(floor_date(as.Date(x), "quarter"),
     ymd("2009-07-01"))
-  expect_identical(floor_date(as.Date(x), "halfyear"),
+  expect_equal(floor_date(as.Date(x), "halfyear"),
     ymd("2009-07-01"))
-  expect_identical(floor_date(as.POSIXlt(x), "minute"),
+  expect_equal(floor_date(as.POSIXlt(x), "minute"),
     as.POSIXlt(as.POSIXct("2009-08-03 12:01:00", tz = "UTC")))
 })
 
 test_that("ceiling_date works for a variety of formats",{
   x <- as.POSIXct("2009-08-03 12:01:59", tz = "UTC")
 
-  expect_identical(ceiling_date(x, "minute"),
+  expect_equal(ceiling_date(x, "minute"),
     as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
-  expect_identical(ceiling_date(as.Date(x), "month"),
+  expect_equal(ceiling_date(as.Date(x), "month"),
     as.Date("2009-09-01"))
-  expect_identical(ceiling_date(as.Date(x), "bimonth"),
+  expect_equal(ceiling_date(as.Date(x), "bimonth"),
     ymd("2009-09-01"))
-  expect_identical(ceiling_date(as.Date(x), "quarter"),
+  expect_equal(ceiling_date(as.Date(x), "quarter"),
     ymd("2009-10-01"))
-  expect_identical(ceiling_date(as.Date(x), "halfyear"),
+  expect_equal(ceiling_date(as.Date(x), "halfyear"),
     ymd("2010-01-01"))
-  expect_identical(ceiling_date(as.POSIXlt(x), "minute"),
+  expect_equal(ceiling_date(as.POSIXlt(x), "minute"),
     as.POSIXlt(as.POSIXct("2009-08-03 12:02:00", tz =
     "UTC")))
 })
@@ -176,11 +233,11 @@ test_that("ceiling_date works for a variety of formats",{
 test_that("round_date works for a variety of formats",{
   x <- as.POSIXct("2009-08-03 12:01:59", tz = "UTC")
 
-  expect_identical(round_date(x, "minute"),
+  expect_equal(round_date(x, "minute"),
     as.POSIXct("2009-08-03 12:02:00", tz = "UTC"))
-  expect_identical(round_date(as.Date(x), "month"),
+  expect_equal(round_date(as.Date(x), "month"),
     as.Date("2009-08-01"))
-  expect_identical(round_date(as.POSIXlt(x), "minute"),
+  expect_equal(round_date(as.POSIXlt(x), "minute"),
     as.POSIXlt(as.POSIXct("2009-08-03 12:02:00", tz =
     "UTC")))
 })
@@ -190,18 +247,56 @@ test_that("rounding works across DST",{
   ## https://github.com/hadley/lubridate/issues/399
   tt <- ymd("2016-03-27", tz="Europe/Helsinki");
   expect_equal(ceiling_date(tt, 'month'), as.POSIXct("2016-04-01", tz = "Europe/Helsinki"))
-  expect_equal(ceiling_date(tt, 'day'), as.POSIXct("2016-03-28", tz = "Europe/Helsinki"))
+  expect_equal(ceiling_date(tt, 'day'), as.POSIXct("2016-03-27", tz = "Europe/Helsinki"))
   tt <- ymd("2016-03-28", tz="Europe/Helsinki");
   expect_equal(floor_date(tt, 'month'), as.POSIXct("2016-03-01", tz = "Europe/Helsinki"))
   tt <- ymd_hms("2016-03-27 05:00:00", tz="Europe/Helsinki");
   expect_equal(floor_date(tt, 'day'), as.POSIXct("2016-03-27", tz = "Europe/Helsinki"))
 })
 
+test_that("Ceiling for partials (Date) rounds up on boundary", {
+  expect_identical(ceiling_date(as.Date("2012-09-27"), 'day'), ymd("2012-09-28"))
+  expect_identical(ceiling_date(as.Date("2012-09-01"), 'day'), ymd("2012-09-02"))
+  expect_identical(ceiling_date(as.Date("2012-09-01"), '2 days'), ymd("2012-09-03"))
+})
+
+test_that("Ceiling for Date returns date when unit level is higher than day", {
+  expect_true(is.Date(ceiling_date(ymd("20160927"), "year")))
+  expect_true(is.Date(ceiling_date(ymd("20160927"), "halfyear")))
+  expect_true(is.Date(ceiling_date(ymd("20160927"), "quarter")))
+  expect_true(is.Date(ceiling_date(ymd("20160927"), "bimonth")))
+  expect_true(is.Date(ceiling_date(ymd("20160927"), "month")))
+  expect_true(is.Date(ceiling_date(ymd("20160927"), "week")))
+  expect_true(is.Date(ceiling_date(ymd("20160927"), "day")))
+  expect_true(is.POSIXct(ceiling_date(ymd("20160927"), "hour")))
+  expect_true(is.POSIXct(ceiling_date(ymd("20160927"), "minute")))
+  expect_true(is.POSIXct(ceiling_date(ymd("20160927"), "second")))
+})
+
+test_that("Ceiling for POSIXct always returns POSIXct", {
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "year")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "halfyear")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "quarter")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "bimonth")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "month")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "week")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "day")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "hour")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "minute")))
+  expect_true(is.POSIXct(ceiling_date(ymd_hms("20160927 00:00:00"), "second")))
+})
+
 test_that("ceiling_date does not round up dates that are already on a boundary",{
-  expect_equal(ceiling_date(as.Date("2012-09-27"), 'day'), as.Date("2012-09-27"))
   expect_equal(ceiling_date(ymd_hms("2012-09-01 00:00:00"), 'month'), as.POSIXct("2012-09-01", tz = "UTC"))
   expect_equal(ceiling_date(ymd_hms("2012-01-01 00:00:00"), 'year'), as.POSIXct("2012-01-01", tz = "UTC"))
+  expect_equal(ceiling_date(ymd_hms("2012-01-01 00:00:00"), '2 year'), as.POSIXct("2012-01-01", tz = "UTC"))
+  expect_equal(ceiling_date(ymd_hms("2012-01-01 00:00:00"), '3 year'), as.POSIXct("2013-01-01", tz = "UTC"))
+  expect_equal(ceiling_date(ymd_hms("2012-01-01 00:00:00"), '5 year'), as.POSIXct("2015-01-01", tz = "UTC"))
   expect_equal(ceiling_date(ymd_hms("2012-01-01 01:00:00"), 'second'), ymd_hms("2012-01-01 01:00:00"))
+  expect_equal(ceiling_date(ymd_hms("2012-01-01 01:00:00"), '2 second'), ymd_hms("2012-01-01 01:00:00"))
+  expect_equal(ceiling_date(ymd_hms("2012-01-01 01:00:00"), '2 second', change_on_boundary = T),
+               ymd_hms("2012-01-01 01:00:02"))
+  expect_equal(ceiling_date(ymd_hms("2012-01-01 01:00:00"), '5 second'), ymd_hms("2012-01-01 01:00:00"))
   expect_equal(ceiling_date(ymd_hms("2012-01-01 00:00:00"), 'bimonth'), ymd_hms("2012-01-01 00:00:00"))
 })
 
@@ -290,3 +385,22 @@ test_that("round_date and ceiling_date skip day time gap", {
 
   expect_equal(round_date(x, "hour"),  y)
 })
+
+test_that("ceiling_date, round_date and floor_date behave correctly with NA", {
+  ## (bug #486)
+  x <- ymd_hms("2009-08-03 12:01:59.23", tz = "UTC") + (0:1)*days()
+  x[2] <- NA
+  expect_equal(ceiling_date(x, unit = "day"),
+               c(ymd("2009-08-04", tz = "UTC"), NA))
+  expect_equal(ceiling_date(x, unit = "seconds"),
+               c(ymd_hms("2009-08-03 12:02:00", tz = "UTC"), NA))
+  expect_equal(ceiling_date(x, unit = "months"),
+               c(ymd("2009-09-01", tz = "UTC"), NA))
+  expect_equal(floor_date(x, unit = "day"),
+               c(ymd("2009-08-03", tz = "UTC"), NA))
+  expect_equal(floor_date(x, unit = "months"),
+               c(ymd("2009-08-01", tz = "UTC"), NA))
+  expect_equal(round_date(x, unit = "minute"),
+               c(ymd_hms("2009-08-03 12:02:00", tz = "UTC"), NA))
+})
+
