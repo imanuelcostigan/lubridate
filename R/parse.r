@@ -280,7 +280,7 @@ hm <- function(..., quiet = FALSE, roll = FALSE) {
 ##' @param ... a character vector of hour minute second triples
 ##' @param quiet logical. When TRUE function evalueates without displaying
 ##'   customary messages.
-##' @param roll logica. When TRUE smaller units are rolled over to higher units
+##' @param roll logical. When TRUE, smaller units are rolled over to higher units
 ##'   if they exceed the conventional limit. For example \code{hms("01:59:120",
 ##'   roll=TRUE)} produces period "2H 1M 0S".
 ##' @return a vector of period objects
@@ -468,7 +468,7 @@ hms <- function(..., quiet = FALSE, roll = FALSE) {
 ##'   selected and \%Y counts as 2.5 tockens (so that it has a priority over
 ##'   \%y\%m). Se examples.
 ##' @param exact logical. If \code{TRUE}, \code{orders} parameter is interpreted
-##'   as an exact \code{strptime} format and no trainign or guessing are
+##'   as an exact \code{strptime} format and no training or guessing are
 ##'   performed.
 ##' @return a vector of POSIXct date-time objects
 ##' @seealso \code{strptime}, \code{\link{ymd}}, \code{\link{ymd_hms}}

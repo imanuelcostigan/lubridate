@@ -2,6 +2,7 @@ Version 1.6.0.9000
 ==================
 
 ### NEW FEATURES
+* [#508](https://github.com/hadley/lubridate/pull/508) New parameter `locale` in `month`. Labels of the returned factors (when `label=TRUE`) now respect current locale.
 * [#485](https://github.com/hadley/lubridate/pull/485) `quarter` gained a new argument `fiscal_start` to address the issue of different fiscal conventions.
 * [#492](https://github.com/hadley/lubridate/issues/492) New functions `epiweek` and `epiyear`.
 * [#257](https://github.com/hadley/lubridate/issues/257) New `start` parameter in `wday` and `wday<-` to set week start.
@@ -9,11 +10,14 @@ Version 1.6.0.9000
 
 ### BUG FIXES
 
+* [#507](https://github.com/hadley/lubridate/issues/507) Period and duration parsers now understand 0 units.
 * [#466](https://github.com/hadley/lubridate/pull/466) Fix wrong formats within ymd_h family of functions.
 * [#472](https://github.com/hadley/lubridate/pull/472) Printing method for duration doesn't throw format error on fractional seconds.
 * [#475](https://github.com/hadley/lubridate/pull/475) character<> comparisons is no longer slow.
 * [#486](https://github.com/hadley/lubridate/issues/486) ceiling_date handles `NA` properly.
 * [#483](https://github.com/hadley/lubridate/pull/483) Fix add_duration_to_date error when duration first element is NA.
+* [#524](https://github.com/hadley/lubridate/pull/524) Correctly compute length of period in months (issue #490)
+* [#525](https://github.com/hadley/lubridate/pull/525) Fix to prevent `day<-`, `minute<-`, etc. from producing an error when length(x) is 0 (issue #517)
 
 Version 1.6.0
 =============
